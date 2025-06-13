@@ -10,15 +10,14 @@
         </template>
         <template x-for="learner in learners" :key="learner.id">
             <div class="bg-white rounded shadow p-4">
-                <h2 class="font-semibold text-lg" x-text="learner.first_name + ' ' + learner.last_name"></h2>
+                <h2 class="font-semibold text-lg" x-text="learner.firstname + ' ' + learner.lastname"></h2>
                 <div class="ml-4 mt-2">
                     <template x-if="learner.courses.length === 0">
                         <div class="text-gray-400 text-sm">No courses enrolled.</div>
                     </template>
                     <template x-for="course in learner.courses" :key="course.id">
                         <div class="flex justify-between text-sm py-1">
-                            <span x-text="course.name"></span>
-                            <span class="font-mono" x-text="course.pivot.progress_percentage + '%' "></span>
+                            <span x-text="course.name + ' (' + (course.pivot.progress ?? 0) + '%)'"></span>
                         </div>
                     </template>
                 </div>
