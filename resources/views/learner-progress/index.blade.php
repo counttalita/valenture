@@ -9,20 +9,34 @@
             <div class="text-gray-500">No learners found.</div>
         </template>
         <template x-for="learner in learners" :key="learner.id">
-            <div class="bg-white rounded shadow p-4">
-                <h2 class="font-semibold text-lg" x-text="learner.firstname + ' ' + learner.lastname"></h2>
-                <div class="ml-4 mt-2">
-                    <template x-if="learner.courses.length === 0">
-                        <div class="text-gray-400 text-sm">No courses enrolled.</div>
-                    </template>
-                    <template x-for="course in learner.courses" :key="course.id">
-                        <div class="flex justify-between text-sm py-1">
-                            <span x-text="course.name + ' (' + (course.pivot.progress ?? 0) + '%)'"></span>
-                        </div>
-                    </template>
-                </div>
+    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-3 hover:shadow-2xl transition-shadow duration-300">
+        <div class="flex items-center gap-4 mb-2">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-tr from-blue-400 to-indigo-500 text-white text-xl font-bold shadow-md">
+                <span x-text="(learner.firstname.charAt(0) + learner.lastname.charAt(0)).toUpperCase()"></span>
             </div>
-        </template>
+            <div>
+                <h2 class="font-semibold text-lg text-gray-900" x-text="learner.firstname + ' ' + learner.lastname"></h2>
+                <span class="text-xs text-gray-500" x-text="'Learner #' + learner.id"></span>
+            </div>
+        </div>
+        <div class="ml-2 mt-2">
+            <template x-if="learner.courses.length === 0">
+                <div class="text-gray-400 text-sm">No courses enrolled.</div>
+            </template>
+            <template x-for="course in learner.courses" :key="course.id">
+                <div class="mb-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-800 font-medium" x-text="course.name"></span>
+                        <span class="text-xs text-gray-500 font-mono" x-text="(course.pivot.progress ?? 0) + '%' "></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                        <div class="bg-gradient-to-r from-blue-400 to-indigo-500 h-2.5 rounded-full transition-all duration-300" :style="'width: ' + (course.pivot.progress ?? 0) + '%'" role="progressbar" :aria-valuenow="course.pivot.progress ?? 0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
     </div>
 </div>
 
