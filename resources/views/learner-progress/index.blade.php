@@ -2,6 +2,29 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-6" x-data="learnerProgress()" x-init="init()">
+    <!-- Modern Course Filter Dropdown -->
+    <div class="mb-8 flex flex-col sm:flex-row items-center gap-4">
+        <div class="w-full sm:w-auto bg-white rounded-xl shadow-md px-4 py-3 flex items-center gap-3 relative">
+            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <!-- Heroicon: academic-cap -->
+                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m0 0c-3.866 0-7-1.343-7-3V10m14 0v3c0 1.657-3.134 3-7 3z"/></svg>
+            </div>
+            <div class="relative w-full">
+                <select x-model="selectedCourseId" @change="applyCourseFilter()" id="courseFilter" class="appearance-none w-full pl-10 pr-8 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white text-gray-800 text-base shadow-sm transition-all duration-200">
+                    <option value="">All Courses</option>
+                    <template x-for="course in courses" :key="course.id">
+                        <option :value="course.id" x-text="course.name"></option>
+                    </template>
+                </select>
+                <label for="courseFilter" class="absolute left-10 top-0 text-xs text-gray-500 pointer-events-none transition-all duration-200">Filter by Course</label>
+                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <!-- Down arrow icon -->
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+            </div>
+            <button x-show="selectedCourseId" @click="clearCourseFilter()" class="ml-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-400 to-indigo-500 text-white font-semibold shadow hover:from-blue-500 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200">Clear</button>
+        </div>
+    </div>
     <h1 class="text-2xl font-bold mb-6">Learner Progress Dashboard</h1>
     <div class="grid gap-6">
         <!-- Learners List -->
