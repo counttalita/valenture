@@ -21,6 +21,13 @@ class LearnerProgressController extends Controller
         $query = Learner::with(['courses' => function($query) {
             $query->withPivot('progress');
         }]);
+        // Filter by course_id if provided
+        if ($request->filled('course_id')) {
+            $courseId = $request->input('course_id');
+            $query->whereHas('courses', function($q) use ($courseId) {
+                $q->where('courses.id', $courseId);
+            });
+        }
         if ($request->has('page')) {
             $learners = $query->paginate($perPage);
         } else {

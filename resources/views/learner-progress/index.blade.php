@@ -66,28 +66,46 @@
 function learnerProgress() {
     return {
         learners: [],
+        courses: [],
+        selectedCourseId: '',
         currentPage: 1,
         totalPages: 1,
         perPage: 10,
         loading: false,
+        async fetchCourses() {
+            const res = await fetch('/api/courses');
+            this.courses = await res.json();
+        },
         async fetchLearners(page = 1) {
             this.loading = true;
-            const res = await fetch(`/api/learners?page=${page}&per_page=${this.perPage}`);
+            let url = `/api/learners?page=${page}&per_page=${this.perPage}`;
+            if (this.selectedCourseId) {
+                url += `&course_id=${this.selectedCourseId}`;
+            }
+            const res = await fetch(url);
             const data = await res.json();
             if (Array.isArray(data)) {
-                // Non-paginated response
                 this.learners = data;
                 this.currentPage = 1;
                 this.totalPages = 1;
             } else {
-                // Paginated response
                 this.learners = data.data ?? [];
                 this.currentPage = data.current_page ?? 1;
                 this.totalPages = data.last_page ?? 1;
             }
             this.loading = false;
         },
+        applyCourseFilter() {
+            this.currentPage = 1;
+            this.fetchLearners();
+        },
+        clearCourseFilter() {
+            this.selectedCourseId = '';
+            this.currentPage = 1;
+            this.fetchLearners();
+        },
         init() {
+            this.fetchCourses();
             this.fetchLearners();
         },
         goToPage(page) {
