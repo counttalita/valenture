@@ -18,4 +18,13 @@ class Learner extends Model
         'firstname',
         'lastname',
     ];
+
+    /**
+     * The courses that the learner is enrolled in.
+     */
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'enrolments', 'learner_id', 'course_id')
+            ->withPivot('progress');
+    }
 }
