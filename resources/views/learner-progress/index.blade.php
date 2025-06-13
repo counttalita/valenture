@@ -5,7 +5,7 @@
     <h1 class="text-2xl font-bold mb-6">Learner Progress Dashboard</h1>
     <div class="grid gap-6">
         <!-- Learners List -->
-        <template x-if="learners.length === 0">
+        <template x-if="learners && learners.length === 0">
             <div class="text-gray-500">No learners found.</div>
         </template>
         <template x-for="learner in learners" :key="learner.id">
@@ -38,6 +38,21 @@
     </div>
 </template>
     </div>
+    <!-- Pagination Controls -->
+    <div class="flex justify-center items-center mt-8" x-show="totalPages > 1">
+        <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1 || loading" class="px-3 py-1 mx-1 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 disabled:opacity-50">Prev</button>
+        <template x-for="page in Array.from({length: totalPages}, (_, i) => i + 1)" :key="page">
+            <button @click="goToPage(page)" :class="{'bg-blue-500 text-white': currentPage === page, 'bg-gray-200 text-gray-700': currentPage !== page}" class="px-3 py-1 mx-1 rounded font-semibold hover:bg-blue-100 disabled:opacity-50" :disabled="loading" x-text="page"></button>
+        </template>
+        <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages || loading" class="px-3 py-1 mx-1 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 disabled:opacity-50">Next</button>
+    </div>
+    <!-- Loading Spinner -->
+    <div class="flex justify-center mt-4" x-show="loading">
+        <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+        </svg>
+    </div>
 </div>
 
 <!-- Alpine.js logic -->
@@ -45,9 +60,33 @@
 function learnerProgress() {
     return {
         learners: [],
-        async init() {
-            const res = await fetch('/api/learners');
-            this.learners = await res.json();
+        currentPage: 1,
+        totalPages: 1,
+        perPage: 10,
+        loading: false,
+        async fetchLearners(page = 1) {
+            this.loading = true;
+            const res = await fetch(`/api/learners?page=${page}&per_page=${this.perPage}`);
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                // Non-paginated response
+                this.learners = data;
+                this.currentPage = 1;
+                this.totalPages = 1;
+            } else {
+                // Paginated response
+                this.learners = data.data ?? [];
+                this.currentPage = data.current_page ?? 1;
+                this.totalPages = data.last_page ?? 1;
+            }
+            this.loading = false;
+        },
+        init() {
+            this.fetchLearners();
+        },
+        goToPage(page) {
+            if (page < 1 || page > this.totalPages) return;
+            this.fetchLearners(page);
         }
     }
 }
