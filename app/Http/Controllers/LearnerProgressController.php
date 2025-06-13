@@ -15,11 +15,17 @@ class LearnerProgressController extends Controller
     }
 
     // API endpoint: Return learners with their courses and progress
-    public function api()
+    public function api(Request $request)
     {
-        $learners = Learner::with(['courses' => function($query) {
+        $perPage = $request->input('per_page', 10);
+        $query = Learner::with(['courses' => function($query) {
             $query->withPivot('progress');
-        }])->get();
+        }]);
+        if ($request->has('page')) {
+            $learners = $query->paginate($perPage);
+        } else {
+            $learners = $query->get();
+        }
         return response()->json($learners);
     }
 

@@ -6,16 +6,22 @@
     <div class="grid gap-6">
         <!-- Learners List -->
         <template x-if="learners && learners.length === 0">
-            <div class="text-gray-500">No learners found.</div>
-        </template>
+    <div class="flex flex-col items-center justify-center py-16">
+        <svg class="h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 014-4h3a4 4 0 014 4v2M9 7a4 4 0 118 0 4 4 0 01-8 0z" /></svg>
+        <div class="text-gray-500 text-lg font-semibold">No learners found.</div>
+        <div class="text-gray-400 text-sm mt-1">Try adjusting your filters or check back later.</div>
+    </div>
+</template>
         <template x-for="learner in learners" :key="learner.id">
     <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-3 hover:shadow-2xl transition-shadow duration-300">
         <div class="flex items-center gap-4 mb-2">
             <div class="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-tr from-blue-400 to-indigo-500 text-white text-xl font-bold shadow-md">
-                <span x-text="(learner.firstname.charAt(0) + learner.lastname.charAt(0)).toUpperCase()"></span>
+                <span x-text="
+    ((learner.firstname && learner.firstname.length > 0 ? learner.firstname[0] : '?') +
+    (learner.lastname && learner.lastname.length > 0 ? learner.lastname[0] : '?')).toUpperCase()"></span>
             </div>
             <div>
-                <h2 class="font-semibold text-lg text-gray-900" x-text="learner.firstname + ' ' + learner.lastname"></h2>
+                <h2 class="font-semibold text-lg text-gray-900" x-text="(learner.firstname ?? '') + ' ' + (learner.lastname ?? '')"></h2>
                 <span class="text-xs text-gray-500" x-text="'Learner #' + learner.id"></span>
             </div>
         </div>
